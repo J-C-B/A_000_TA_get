@@ -1,25 +1,22 @@
 """ dummy place holder modular input to enable Splunk Web config """
-__author__ = "Michael Uschmann / MuS"
+__author__ = "Michael Uschmann / MuS" 
 __date__ = "Copyright $Aug 25, 2017 7:48:46 PM$"
 __version__ = "0.1"
 
 import sys
-# import json
-# import urllib2
 import splunk.Intersplunk
 import logging
 import logging.handlers
-import splunk.Intersplunk
 import xml.dom.minidom
 import xml.sax.saxutils
 
 """ do we want debug output into splunkd.log? """
 """ search with 'index=_internal  sourcetype=splunkd component=ExecProcessor' """
-# myDebug = "yes"
+#myDebug = "yes"
 myDebug = "no"
 
 """ set up logging """
-# logging.root
+logging.root
 logging.root.setLevel(logging.INFO)
 formatter = logging.Formatter('%(levelname)s %(message)s')
 """ with zero args , should go to STD ERR """
@@ -50,16 +47,13 @@ SCHEME = """<scheme>
 </scheme>
 """
 
-
-def do_scheme():
+def do_scheme(): 
     """ show a different setup screen """
     print SCHEME
 
-
-def validate_arguments():
+def validate_arguments(): 
     """ we don't do any validation - yet """
     pass
-
 
 def get_config():
     """ read XML configuration passed from splunkd """
@@ -74,31 +68,27 @@ def get_config():
         root = doc.documentElement
         conf_node = root.getElementsByTagName("configuration")[0]
         if conf_node:
-            if myDebug == "yes":
-                logging.info("XML: found configuration")
+            if myDebug == "yes" : logging.info("XML: found configuration")
             stanza = conf_node.getElementsByTagName("stanza")[0]
             if stanza:
                 stanza_name = stanza.getAttribute("name")
                 if stanza_name:
-                    if myDebug == "yes":
-                        logging.info("XML: found stanza " + stanza_name)
+                    if myDebug == "yes" : logging.info("XML: found stanza " + stanza_name)
                     config["name"] = stanza_name
 
                     params = stanza.getElementsByTagName("param")
                     for param in params:
                         param_name = param.getAttribute("name")
-                        if myDebug == "yes":
-                            logging.info("XML: found param '%s'" % param_name)
+                        if myDebug == "yes" : logging.info("XML: found param '%s'" % param_name)
                         if param_name and param.firstChild and \
-                                        param.firstChild.nodeType == param.firstChild.TEXT_NODE:
+                           param.firstChild.nodeType == param.firstChild.TEXT_NODE:
                             data = param.firstChild.data
                             config[param_name] = data
-                            if myDebug == "yes":
-                                logging.info("XML: '%s' -> '%s'" % (param_name, data))
+                            if myDebug == "yes" : logging.info("XML: '%s' -> '%s'" % (param_name, data))
 
         checkpnt_node = root.getElementsByTagName("checkpoint_dir")[0]
         if checkpnt_node and checkpnt_node.firstChild and \
-                        checkpnt_node.firstChild.nodeType == checkpnt_node.firstChild.TEXT_NODE:
+           checkpnt_node.firstChild.nodeType == checkpnt_node.firstChild.TEXT_NODE:
             config["checkpoint_dir"] = checkpnt_node.firstChild.data
 
         if not config:
@@ -111,22 +101,19 @@ def get_config():
 
     return config
 
-
 def run_main():
     """ get the config """
     config = get_config()
 
     # now we get data
-    try:  # lets do it
-        if myDebug == "yes":
-            logging.info("getting data ...")
+    try: # lets do it
+        if myDebug == "yes": logging.info( "getting data ..." ) 
 
-    except Exception, e:  # get error back
-        logging.error("ERROR: unable to get data.")
-        logging.error("ERROR: %s " % e)
-        splunk.Intersplunk.generateErrorResults(': unable to get data.')  # print the error into Splunk UI
-        sys.exit()  # exit on error
-
+    except Exception, e: # get error back
+        logging.error( "ERROR: unable to get data." ) 
+        logging.error( "ERROR: %s " % e ) 
+        splunk.Intersplunk.generateErrorResults(': unable to get data.') # print the error into Splunk UI
+        sys.exit() # exit on error
 
 if __name__ == '__main__':
     """ Script must implement these args: scheme, validate-arguments """

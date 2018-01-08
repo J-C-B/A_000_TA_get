@@ -17,4 +17,3 @@ Google directions - get your API key from https://developers.google.com/maps/doc
 
 3. Usage:
 Use the custom search command `get` to eihter get moon data (| get me=moon ), weater ( | get me=weather ... ) or Google directions ( | get me=dircetions ... )
-
