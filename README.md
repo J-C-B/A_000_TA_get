@@ -1,22 +1,20 @@
 # A_000_TA_get
-
 Get web API data into Splunk
 
-This Splunk app is used in my Darksky Photographie Splunk app and demonstrated in my .conf 2017 talk:
+This Splunk app was used in my Darksky Photographie Splunk app and demonstrated in my .conf 2017 talk:
 
-Take a talk into the art of dark sky photography with a splunk ninja, slides can be found [HERE](https://conf.splunk.com/files/2017/slides/take-a-talk-into-the-art-of-dark-sky-photography-with-a-splunk-ninja.pdf)
+Take a talk into the art of dark sky photography with a splunk ninja
 
+https://conf.splunk.com/files/2017/slides/take-a-talk-into-the-art-of-dark-sky-photography-with-a-splunk-ninja.pdf
 
-
-## Install:
+1. Install:
 Install as usual in the Splunk web or copy into $SPLUNK_HOME/etc/apps
 
-## Configure:
+2. Configure:
+Moon API - nothing to do here, move along.
+Weather API - get your API key from http://api.openweathermap.org and use the Splunk web to configure the input.
+Google directions - get your API key from https://developers.google.com/maps/documentation/directions/get-api-key and use the Splunk web to configure the input.
 
-* Moon API - nothing to do here, move along - its open and free thanks to NASA so no configuration required.
-* Weather API - get your API key from http://api.openweathermap.org and use the Splunk web to configure the input.
-* Google directions - get your API key from https://developers.google.com/maps/documentation/directions/get-api-key and use the Splunk web to configure the input.
-
-## Usage:
-Use the custom search command `get` to eihter get moon data (`| get me=moon `), weather (`| get me=weather ... `) or Google directions ( `| get me=directions ...`)
+3. Usage:
+Use the custom search command `get` to eihter get moon data (| get me=moon ), weater ( | get me=weather ... ) or Google directions ( | get me=dircetions ... )
 
