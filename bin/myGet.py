@@ -4,12 +4,9 @@ __date__ = "Copyright $Aug 25, 2017 7:48:46 PM$"
 __version__ = "0.1"
 
 import sys
-import json
-import urllib2
 import splunk.Intersplunk
 import logging
 import logging.handlers
-import splunk.Intersplunk
 import xml.dom.minidom
 import xml.sax.saxutils
 

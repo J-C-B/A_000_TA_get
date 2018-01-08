@@ -62,17 +62,17 @@ try: # lets do it
         for k, v in r.items(): # get key value pairs for each result
             logger.info( "Key is : %s | Value is : %s " % (k,v) ) # logger
             if k == "dest_lat": # get key
-                dest_lat = v # set value
+                r_dest_lat = v # set value
             if k == "dest_lon": # get key
-                dest_lon = v # set value
+                r_dest_lon = v # set value
             if k == "src_lat": # get key
-                lat = v # set value
+                r_lat = v # set value
             if k == "src_lon": # get key
-                lon = v # set value
+                r_lon = v # set value
             if k == "lat": # get key
-                lat = v # set value
+                r_lat = v # set value
             if k == "lon": # get key
-                lon = v # set value
+                r_lon = v # set value
 
 except: # get error back
     logger.info( "INFO: no previous search results provided using [default]!" ) # logger
@@ -81,12 +81,17 @@ except: # get error back
 try: # lets do it
     logger.info( 'getting Splunk options...' ) # logger
     keywords, options = splunk.Intersplunk.getKeywordsAndOptions() # get key value pairs from user search
+    logger.info( 'got these options: %s ...' % (options)) # logger
     section_name = options.get('me','moon') # get user option or use a default value
-    forcast = options.get('forcast','no') # get user option or use a default value
-    lat = options.get('lat',lat) # get user option or use a default value
-    lon = options.get('lon',lon) # get user option or use a default value
-    dest_lat = options.get('dest_lat',dest_lat) # get user option or use a default value
-    dest_lon = options.get('dest_lon',dest_lon) # get user option or use a default value
+    logger.info( 'got these options: section_name = %s ...' % (section_name)) # logger
+    forecast = options.get('forecast','no') # get user option or use a default value
+    logger.info( 'got these options: forecast = %s ...' % (forecast)) # logger
+    lat = options.get('lat','r_lat') # get user option or use a default value
+    logger.info( 'got these options: lat = %s ...' % (lat)) # logger
+    lon = options.get('lon','r_lon') # get user option or use a default value
+    logger.info( 'got these options: lon = %s ...' % (lon)) # logger
+    dest_lat = options.get('dest_lat','r_dest_lat') # get user option or use a default value
+    dest_lon = options.get('dest_lon','r_dest_lon') # get user option or use a default value
     logger.info( 'got these options: %s %s %s %s %s ...' % (section_name, lat, lon, dest_lat, dest_lon)) # logger
 
 except: # get error back
@@ -95,7 +100,10 @@ except: # get error back
 # set path to inputs.conf file
 try: # lets do it
     logger.info( 'read the inputs.conf...' ) # logger
-    configLocalFileName = os.path.join(myPath,'..','local','inputs.conf') # setup path to inputs.conf
+    if os.path.isfile(os.path.join(myPath,'..','local','inputs.conf')): # do we have a local inputs.conf?
+        configLocalFileName = os.path.join(myPath,'..','local','inputs.conf') # use it
+    else: 
+        configLocalFileName = os.path.join(myPath,'..','default','inputs.conf') # use the default one
     logger.info( 'inputs.conf file: %s' % configLocalFileName ) # logger
     parser = SafeConfigParser() # setup parser to read the inputs.conf
     parser.read(configLocalFileName) # read inputs.conf options
@@ -160,16 +168,16 @@ try: # lets do it
     # getting weather data
     if 'weather' in section_name:
         r_parsed = ''
-        if forcast == "yes":
-            con_str = '%s/data/2.5/forecast?lat=%s0&lon=%s0&units=metric&appid=%s&cnt=14' % (server,lat,lon,token)
-        if forcast == "no":
-            con_str = '%s/data/2.5/weather?lat=%s0&lon=%s0&units=metric&appid=%s&cnt=14' % (server,lat,lon,token)
+        if forecast == "yes":
+            con_str = '%s/data/2.5/forecast?lat=%s&lon=%s&units=metric&appid=%s&cnt=14' % (server,lat,lon,token)
+        if forecast == "no":
+            con_str = '%s/data/2.5/weather?lat=%s&lon=%s&units=metric&appid=%s&cnt=14' % (server,lat,lon,token)
         logger.info( 'using con_str %s ...' % con_str ) 
         url = urllib2.urlopen('%s' % con_str)
         r_parsed = json.loads(url.read())
         logger.info( 'parsed result %s ...' % r_parsed ) 
         responses = [] # setup empty list
-        if forcast == "yes":
+        if forecast == "yes":
             result = r_parsed['list']
             for f_c in result:
                 response = {} # setup empty list
@@ -187,7 +195,7 @@ try: # lets do it
                 od = collections.OrderedDict(sorted(response.items())) # sort the list
                 responses.append(od) # append the ordered results to the list
             splunk.Intersplunk.outputResults( responses ) # print the result into Splunk UI
-        if forcast == "no":
+        if forecast == "no":
             f_c = r_parsed
             response = {} # setup empty list
             response['_time'] = f_c['dt'] # fill in key value pairs
